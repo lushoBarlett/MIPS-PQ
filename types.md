@@ -5,7 +5,7 @@ It's in C notation, I'm very sorry.
 ### Input
 ```C
 struct Input {
-  string value;
+  void* value; // string
   int priority;
 }
 ```
@@ -13,8 +13,8 @@ struct Input {
 ### Node
 ```C
 struct Node {
-  void* left;
-  void* right;
+  void* left; // Node
+  void* right; // Node
   int priority;
 }
 ```
