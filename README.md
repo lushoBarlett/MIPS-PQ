@@ -10,7 +10,7 @@ Details on input and output are specified [here](/types.md).
 * Tags have to be on the left of the first line of code, and all code until the end of that section has to be aligned.
 
 Do:
-```
+```Assembly
 f: li $t0, 0
    andi $t0, 0x1
 Loop: addi $t0, 1
@@ -22,7 +22,7 @@ End: move $a1, $a0
 ```
 
 Don't:
-```
+```Assembly
 f: 
 li $t0, 0
 andi $t0, 0x1
