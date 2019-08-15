@@ -1,7 +1,7 @@
 # MIPS-PQ
 Priority queue in MIPS processor
 
-Each person will be assigned simple functions to implement using these [Rules]().
+Each person will be assigned simple functions to implement using these [Rules](#Rules).
 Details on input and output are specified [here](/types.md).
 
 ## Rules
