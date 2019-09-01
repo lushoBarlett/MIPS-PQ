@@ -6,19 +6,21 @@ Details on input and output are specified [here](/specs.md).
 
 ## Rules
 
-* Functions will manipulate values in memory, meaning no arguments will be passed or returned in registers (unless for a specific and useful purpose).
-* Tags have to be on the left of the first line of code, and all code until the end of that section has to be aligned.
+* follow [these rules](http://cs.brown.edu/courses/cs031/content/docs/asmguide.pdf).
 
 Do:
 ```Assembly
-f: li $t0, 0
-   andi $t0, 0x1
-Loop: addi $t0, 1
-      move $a0, $t0
-      beq $a0, $t0, End
-      j Loop
-End: move $a1, $a0
-     jr
+f: 
+  li $t0, 0
+  andi $t0, 0x1
+  Loop:
+    addi $t0, 1
+    move $a0, $t0
+    beq $a0, $t0, End
+    j Loop
+  End:
+  move $a1, $a0
+  jr
 ```
 
 Don't:
