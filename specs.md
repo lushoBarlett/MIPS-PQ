@@ -13,8 +13,6 @@ struct Input {
 ### Node
 ```C
 struct Node {
-  void* left; // Node
-  void* right; // Node
   void* data; // LinkedList
   int priority;
 }
@@ -27,3 +25,11 @@ struct Data {
   void* next; // Data
 }
 ```
+
+### Actual structure
+Similar to this C++ thing
+```C++
+vector<Node> heap;
+```
+
+We will use [this implementation](https://www.geeksforgeeks.org/binary-heap/).
