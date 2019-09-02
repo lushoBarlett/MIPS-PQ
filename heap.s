@@ -129,6 +129,47 @@ heap_insert:                      #
   j $ra                           #
 ###################################
 
+###################################
+heap_pop:                         #
+  sub $sp, $sp, 12                #
+  sw $ra, ($sp)                   #
+  sw $a0, 4($sp)                  #
+  sw $s0, 8($sp)                  #
+                                  #
+  lw $t0, heap_size($0)           #
+  ble $t0, $0, has1               # if (heap_size <= 0) {
+    li $v0, 0                     #
+    j heap_pop_return             #   return nullptr;
+  has1:                           # }
+  li $v0, 9                       #
+  li $a0, NODE_SIZE               # // arg0
+  syscall                         # Node *elem = new Node()
+  move $a1, $v0                   # // arg1
+  la $a2, heap_array($0)          # // arg2
+  jal copy                        # *(elem) = heap[0];
+  lw $t0, heap_size($0)           #
+  li $t1, 1                       #
+  beq $t0, $t1, hasmore           # if (heap_size == 1) {
+    sw $0, heap_size($0)          #   heap_size = 0;
+    j heap_pop_return             #   return elem;
+  hasmore:                        # }
+  sub $t0, $t0, 1                 #
+  sw $t0, heap_size($0)           # heap_size--;
+  la $a1, heap_array($0)          # // arg1
+  move $a2, $a1                   #
+  mul $t0, $t0, NODE_SIZE         #
+  add $a2, $a2, $t0               # // arg2
+  jal copy                        # heap[0] = heap[heap_size]
+  heap_pop_return:                #
+                                  # MinHeapify(0)
+  lw $ra, ($sp)                   #
+  lw $a0, 4($sp)                  #
+  lw $s0, 8($sp)                  #
+  add $sp, $sp, 12                #
+  j $ra                           # return elem;
+###################################
+# $v0 - address of newly allocated removed element
+
 # $a0 - index in bytes
 ###########################
 heap_parent:              #
