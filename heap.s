@@ -141,6 +141,7 @@ heap_pop:                         #
     li $v0, 0                     #
     j heap_pop_return             #   return nullptr;
   has1:                           # }
+                                  #
   li $v0, 9                       #
   li $a0, NODE_SIZE               # // arg0
   syscall                         # Node *elem = new Node()
@@ -149,10 +150,12 @@ heap_pop:                         #
   jal copy                        # *(elem) = heap[0];
   lw $t0, heap_size($0)           #
   li $t1, 1                       #
+                                  #
   beq $t0, $t1, hasmore           # if (heap_size == 1) {
     sw $0, heap_size($0)          #   heap_size = 0;
     j heap_pop_return             #   return elem;
   hasmore:                        # }
+                                  #
   sub $t0, $t0, 1                 #
   sw $t0, heap_size($0)           # heap_size--;
   la $a1, heap_array($0)          # // arg1
@@ -160,8 +163,41 @@ heap_pop:                         #
   mul $t0, $t0, NODE_SIZE         #
   add $a2, $a2, $t0               # // arg2
   jal copy                        # heap[0] = heap[heap_size]
-  heap_pop_return:                #
-                                  # MinHeapify(0)
+  li $s0, 0                       # int i = 0;
+  heap_pop_loop:                  #
+    move $a0, $s0                 #
+    jal heap_left                 #
+    move $t0, $v0                 #   int l = left(i); 
+    jal heap_right                #
+    move $t1, $v0                 #   int r = right(i); 
+    move $t2, $a0                 #   int smallest = i; 
+    lw $t3, heap_size($0)         #
+                                  #
+    bge $t0, $t3, heap_pop_1      #   if (l < heap_size &&
+    la $t4, heap_array($0)        #
+    add $t5, $t4, $t0             #   // heap[l]
+    add $t6, $t4, $t2             #   // heap[smallest]
+    bge $t5, $t6, heap_pop_1      #   heap[l] < heap[smallest]) 
+      move $t2, $t0               #     smallest = l; 
+    heap_pop_1:                   #
+                                  #
+    bge $t1, $t3, heap_pop_2      #   if (r < heap_size &&
+    add $t5, $t4, $t1             #   // heap[r]
+    add $t6, $t4, $t2             #   // heap[smallest]
+    bge $t5, $t6, heap_pop_2      #   heap[r] < heap[smallest]) 
+      move $t2, $t1               #     smallest = r; 
+    heap_pop_2:                   #  
+                                  #
+    beq $t2, $a0, heap_pop_return #   if (smallest != i) { 
+      li $a0, NODE_SIZE           #     // arg0
+      add $a1, $t4, $s0           #     // heap[i]
+      add $a2, $t4, $t2           #     // heap[smallest]
+      jal swap                    #     swap(&heap[i], &heap[smallest]); 
+      move $s0, $t2               #     i = smallest;
+      j heap_pop_loop             #     continue;
+                                  #   }
+                                  #   break;
+  heap_pop_return:                # }
   lw $ra, ($sp)                   #
   lw $a0, 4($sp)                  #
   lw $s0, 8($sp)                  #
