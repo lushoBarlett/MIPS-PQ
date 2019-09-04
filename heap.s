@@ -137,7 +137,7 @@ heap_pop:                         #
   sw $s0, 8($sp)                  #
                                   #
   lw $t0, heap_size($0)           #
-  ble $t0, $0, has1               # if (heap_size <= 0) {
+  bgt $t0, $0, has1               # if (heap_size <= 0) {
     li $v0, 0                     #
     j heap_pop_return             #   return nullptr;
   has1:                           # }
@@ -151,7 +151,7 @@ heap_pop:                         #
   lw $t0, heap_size($0)           #
   li $t1, 1                       #
                                   #
-  beq $t0, $t1, hasmore           # if (heap_size == 1) {
+  bne $t0, $t1, hasmore           # if (heap_size == 1) {
     sw $0, heap_size($0)          #   heap_size = 0;
     j heap_pop_return             #   return elem;
   hasmore:                        # }
@@ -172,6 +172,7 @@ heap_pop:                         #
     move $t1, $v0                 #   int r = right(i); 
     move $t2, $a0                 #   int smallest = i; 
     lw $t3, heap_size($0)         #
+    mul $t3, $t3, NODE_SIZE       # // convert to bytes to compare
                                   #
     bge $t0, $t3, heap_pop_1      #   if (l < heap_size &&
     la $t4, heap_array($0)        #
@@ -266,6 +267,7 @@ main:
 loop:
   li $v0, 5
   syscall
+  beq $v0, $0, loop2
   sw $v0, node_buffer($0)
   
   li $v0, 5
@@ -275,6 +277,13 @@ loop:
   jal heap_insert
   jal heap_print
   j loop
+  
+loop2:
+  lw $v0, heap_size($0)
+  beq $v0, $0, exit
+  jal heap_pop
+  jal heap_print
+  j loop2
 exit:
   li $v0, 10
   syscall
