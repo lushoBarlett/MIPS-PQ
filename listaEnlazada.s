@@ -6,8 +6,18 @@
 
 .data
 lista: .word 0					# Direccion del primer elemento. Se inicializa en 0 cuando no hay elementos.
+elemTest: .asciiz "Hola capo"
 
 .text
+
+main:
+  la $a1, elemTest
+  la $a0, lista
+  jal listaPush
+  
+  li $v0, 10
+  syscall
+  
 
 # Pone un elemento al final de la lista. Recordar que este elemento es una direccion.
 # $a0 - direccion de la lista.
@@ -20,7 +30,7 @@ listaPush:						#
 								#
   Recorrer:						# Primero tengo que llegar al ultimo elemento.
     addi $t2, $t2 ,32			#
-	lw $t3, 0($t2)				# Veo la direccion del siguiente.
+	lw $t3, ($t2)				# Veo la direccion del siguiente.
 	beq $t3, $0, FinRecorrer	# Si la direccion del siguiente es 0, estoy en el ultimo elemento.
 								#
 	addi $t2, $t3, 0			# Paso al siguiente elemento de la lista.
