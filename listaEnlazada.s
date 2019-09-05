@@ -9,11 +9,16 @@ lista: .word 0					# Direccion del primer elemento. Se inicializa en 0 cuando no
 OFFSET_DIRECCION = 0			# Offset desde la direccion de un elemento y la direccion del siguiente
 OFFSET_DATO	= 32				# Offset desde la direccion de un elemento y su dato almacenado
 elemTest: .asciiz "Hola capo"
+elemTest2: .asciiz "Que onda man"
 
 .text
 
 main:
   la $a1, elemTest
+  la $a0, lista
+  jal listaPush
+  
+  la $a1, elemTest2
   la $a0, lista
   jal listaPush
   
@@ -44,11 +49,10 @@ listaPush:								#
   li $a0, 8								#
   li $v0, 9								#
   syscall								# Alojo espacio para el nuevo elemento: 8 bytes.
-  addi $t4, $v0, 0						# $t4 - Direccion del nuevo elemento.
+  addi $t2, $v0, 0						# $t2 - Direccion del nuevo elemento.
 										#
-  sw $t4, 0($t2)						# Hago que el ex-ultimo elemento "apunte" al nuevo.
+  sw $v0, 0($t0)						# Hago que el ex-ultimo elemento "apunte" al nuevo.
 										#
-  addi $t2, $t4, 0						# Me muevo al nuevo elemento.
   sw $0, 0($t2)							# Como el nuevo elemento es el ultimo, la direccion del siguiente es 0.
 										#
   addi $t2, $t2, OFFSET_DATO			# Me muevo a la segunda componenete del nuevo elemento.
