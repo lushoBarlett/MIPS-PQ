@@ -87,17 +87,12 @@ listaPush:								#
 # $a0 - direccion de la lista. Es decir, direccion donde esta almacenada la direccion del primer elemento.
 #########################################
 listaPop:								#
-  add $t0, $a0, 0						#
+  lw $t1, ($a0)							# $t1 - Direccion del primer elemento, el que voy a sacar.
+  lw $t2, OFFSET_DIRECCION($t1)			# $t2 - Direccion del segundo elemento, el que se volverá el primero.
 										#
-  lw $t1, ($t0)							# $t1 - Direccion del primer elemento, el que voy a sacar.
-  lw $t2, ($t1)							# $t2 - Direccion del segundo elemento, el que se volverá primero.
+  sw $t2, OFFSET_DIRECCION($a0)			# Almaceno la direccion del segundo elemento como el nuevo primero.
 										#
-  sw $t2, 0($t0)						# Almaceno la direccion del segundo elemento como el nuevo primero.
-										#
-  add $t1, $t1, OFFSET_DATO 			# Me muevo a la segunda componenete del elemento que estoy popeando.
-  lw $v0, ($t1)							# Preparo la direccion que voy a retornar.
-										#
-  add $a0, $t0, 0						#
+  lw $v0, OFFSET_DATO($t1)				# Preparo la direccion que voy a retornar.
   jr $ra								#
 #########################################
 # $v0 - direccion del string popeado.
@@ -107,5 +102,6 @@ jal string
 move $a1, $v0
 la $a0, lista
 jal listaPush
+jal listaPop
 li $v0, 10
 syscall
